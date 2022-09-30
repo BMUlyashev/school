@@ -23,6 +23,9 @@ public class StudentService {
     }
 
     public Student editStudent(Student student) {
+        if (!students.containsKey(student.getId())) {
+            return null;
+        }
         students.put(student.getId(), student);
         return student;
     }
