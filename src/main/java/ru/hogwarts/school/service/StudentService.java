@@ -5,7 +5,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -21,10 +21,8 @@ public class StudentService {
     }
 
     public Student findStudent(long id) {
-        if (studentRepository.findById(id).isPresent()) {
-            return studentRepository.findById(id).get();
-        }
-        return null;
+        Optional<Student> student = studentRepository.findById(id);
+        return student.orElse(null);
     }
 
     public Student editStudent(Student student) {
@@ -35,13 +33,11 @@ public class StudentService {
         studentRepository.deleteById(id);
     }
 
-    public Collection<Student> getStudentByAge(int age) {
-        return studentRepository.findAll().stream()
-                .filter(c -> c.getAge() == age)
-                .collect(Collectors.toUnmodifiableList());
+    public Collection<Student> getByAge(int age) {
+        return studentRepository.findByAge(age);
     }
 
-    public Collection<Student> getStudentByAge() {
+    public Collection<Student> getAll() {
         return studentRepository.findAll();
     }
 }

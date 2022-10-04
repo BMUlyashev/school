@@ -50,9 +50,9 @@ public class StudentController {
     @GetMapping
     public ResponseEntity<Collection<Student>> getStudentByAge(@RequestParam(required = false) Integer age) {
         if (age == null) {
-            return ResponseEntity.ok(studentService.getStudentByAge());
+            return ResponseEntity.ok(studentService.getAll());
         } else if (age > 0) {
-            return ResponseEntity.ok(studentService.getStudentByAge(age));
+            return ResponseEntity.ok(studentService.getByAge(age));
         }
         return ResponseEntity.ok(Collections.emptyList());
     }
