@@ -26,7 +26,12 @@ public class StudentService {
     }
 
     public Student editStudent(Student student) {
-        return studentRepository.save(student);
+        return studentRepository.findById(student.getId())
+                .map(s -> {
+                    s.setName(student.getName());
+                    s.setAge(student.getAge());
+                    return studentRepository.save(s);
+                }).orElse(null);
     }
 
     public void deleteStudent(long id) {

@@ -26,7 +26,12 @@ public class FacultyService {
     }
 
     public Faculty editFaculty(Faculty faculty) {
-        return facultyRepository.save(faculty);
+        return facultyRepository.findById(faculty.getId())
+                .map(s -> {
+                    s.setName(faculty.getName());
+                    s.setColor(faculty.getColor());
+                    return facultyRepository.save(s);
+                }).orElse(null);
     }
 
     public void deleteFaculty(long id) {
