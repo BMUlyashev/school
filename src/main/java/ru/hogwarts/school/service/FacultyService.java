@@ -34,6 +34,7 @@ public class FacultyService {
                 }).orElse(null);
     }
 
+
     public void deleteFaculty(long id) {
         facultyRepository.deleteById(id);
     }
@@ -44,5 +45,10 @@ public class FacultyService {
 
     public Collection<Faculty> getAll() {
         return facultyRepository.findAll();
+    }
+
+    public Collection<Faculty> getByFilterString(String filterString) {
+        return facultyRepository.findNameOrColor(filterString);
+//        return facultyRepository.findByNameLikeIgnoreCaseOrColorLikeIgnoreCase(filterString, filterString);
     }
 }
