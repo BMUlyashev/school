@@ -23,6 +23,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     //    @Query("select f from Faculty f, Student s where s.faculty_id = f.id and s.id = :id")
     @Query(value = "select f from Faculty as f, Student as s where f.id = s.faculty.id and s.id = :id")
-    Faculty findFaculty(long id);
+    Faculty findFaculty(Long id);
 
 }

@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collections;
@@ -60,9 +61,16 @@ public class FacultyServiceTest {
     @Test
     public void editFaculty() {
         Faculty faculty = createFaculty(1, "1", "red");
+        Faculty facultyNew = createFaculty(1, "2", "blue");
+
+        when(facultyRepository.findById(any()))
+                .thenReturn(Optional.of(faculty))
+                .thenReturn(Optional.empty());
+
         when(facultyRepository.save(any(Faculty.class)))
-                .thenReturn(faculty);
-        assertThat(facultyService.editFaculty(faculty)).isEqualTo(faculty);
+                .thenReturn(facultyNew);
+        assertThat(facultyService.editFaculty(faculty)).isEqualTo(facultyNew);
+        assertThat(facultyService.editFaculty(faculty)).isNull();
     }
 
     @Test
@@ -109,11 +117,61 @@ public class FacultyServiceTest {
     }
 
 
+    @Test
+    public void getByFilterString() {
+        List<Faculty> facultiesEqualColor = List.of(
+                createFaculty(1, "1", "red"),
+                createFaculty(3, "3", "red")
+        );
+        List<Faculty> facultiesEqualName = List.of(
+                createFaculty(1, "1", "red"),
+                createFaculty(3, "1", "blue")
+        );
+
+        when(facultyRepository.findNameOrColor("red"))
+                .thenReturn(facultiesEqualColor);
+
+
+        when(facultyRepository.findNameOrColor("1"))
+                .thenReturn(facultiesEqualName);
+
+        assertThat(facultyService.getByFilterString("red"))
+                .hasSize(2)
+                .containsExactlyInAnyOrderElementsOf(facultiesEqualColor);
+        assertThat(facultyService.getByFilterString("1"))
+                .hasSize(2)
+                .containsExactlyInAnyOrderElementsOf(facultiesEqualName);
+    }
+
+    @Test
+    public void findStudent() {
+        List<Student> students = List.of(
+                createStudent(1, "1", 18),
+                createStudent(3, "3", 19),
+                createStudent(5, "5", 20)
+        );
+
+        when(facultyRepository.findStudents(any()))
+                .thenReturn(students);
+
+        assertThat(facultyService.findStudents(1))
+                .hasSize(3)
+                .containsExactlyInAnyOrderElementsOf(students);
+    }
+
     private Faculty createFaculty(long id, String name, String color) {
         Faculty faculty = new Faculty();
         faculty.setId(id);
         faculty.setName(name);
         faculty.setColor(color);
         return faculty;
+    }
+
+    private Student createStudent(long id, String name, int age) {
+        Student student = new Student();
+        student.setId(id);
+        student.setName(name);
+        student.setAge(age);
+        return student;
     }
 }
