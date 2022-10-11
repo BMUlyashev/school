@@ -61,9 +61,16 @@ public class StudentServiceTest {
     @Test
     public void editStudent() {
         Student student = createStudent(1, "1", 18);
+        Student studentNew = createStudent(1, "2", 20);
+        when(studentRepository.findById(any()))
+                .thenReturn(Optional.of(student))
+                .thenReturn(Optional.empty());
+
         when(studentRepository.save(any(Student.class)))
-                .thenReturn(student);
-        assertThat(studentService.editStudent(student)).isEqualTo(student);
+                .thenReturn(studentNew);
+
+        assertThat(studentService.editStudent(student)).isEqualTo(studentNew);
+        assertThat(studentService.editStudent(student)).isNull();
     }
 
     @Test
@@ -110,12 +117,98 @@ public class StudentServiceTest {
                 .containsExactlyInAnyOrderElementsOf(students);
     }
 
+    @Test
+    public void findByAgeBetween() {
+        List<Student> students = List.of(
+                createStudent(1, "1", 18),
+                createStudent(3, "3", 19),
+                createStudent(5, "5", 20)
+        );
+
+        int minAge = 18;
+        int maxAge = 20;
+        int minAgeFail = 10;
+        int maxAgeFail = 13;
+
+        when(studentRepository.findByAgeBetween(any(), any()))
+                .thenReturn(students)
+                .thenReturn(Collections.emptyList());
+
+        assertThat(studentService.findByAgeBetween(minAge, maxAge))
+                .filteredOn(student -> student.getAge() >= minAge && student.getAge() <= maxAge)
+                .hasSize(3);
+        assertThat(studentService.findByAgeBetween(minAgeFail, maxAgeFail))
+                .hasSize(0);
+    }
+
+    @Test
+    public void findByAgeLessMax() {
+        List<Student> students = List.of(
+                createStudent(1, "1", 18),
+                createStudent(3, "3", 19),
+                createStudent(5, "5", 20)
+        );
+
+        int maxAge = 20;
+        int maxAgeFail = 17;
+
+        when(studentRepository.findByAgeLessThanEqual(any()))
+                .thenReturn(students)
+                .thenReturn(Collections.emptyList());
+
+        assertThat(studentService.findByAgeLessMax(maxAge))
+                .filteredOn(student -> student.getAge() <= maxAge)
+                .hasSize(3);
+        assertThat(studentService.findByAgeLessMax(maxAgeFail))
+                .hasSize(0);
+    }
+
+    @Test
+    public void findByAgeGreaterMin() {
+        List<Student> students = List.of(
+                createStudent(1, "1", 18),
+                createStudent(3, "3", 19),
+                createStudent(5, "5", 20)
+        );
+
+        int minAge = 18;
+        int minAgeFail = 22;
+
+        when(studentRepository.findByAgeGreaterThanEqual(any()))
+                .thenReturn(students)
+                .thenReturn(Collections.emptyList());
+
+        assertThat(studentService.findByAgeGreaterMin(minAge))
+                .filteredOn(student -> student.getAge() >= minAge)
+                .hasSize(3);
+        assertThat(studentService.findByAgeGreaterMin(minAgeFail))
+                .hasSize(0);
+    }
+
+    @Test
+    public void findFaculty() {
+        Faculty faculty = createFaculty(1, "1", "red");
+        when(studentRepository.findFaculty(any()))
+                .thenReturn(faculty);
+
+        assertThat(studentService.findFaculty(1)).isEqualTo(faculty);
+
+    }
+
     private Student createStudent(long id, String name, int age) {
         Student student = new Student();
         student.setId(id);
         student.setName(name);
         student.setAge(age);
         return student;
+    }
+
+    private Faculty createFaculty(long id, String name, String color) {
+        Faculty faculty = new Faculty();
+        faculty.setId(id);
+        faculty.setName(name);
+        faculty.setColor(color);
+        return faculty;
     }
 
 
