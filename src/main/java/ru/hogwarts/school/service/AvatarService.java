@@ -1,6 +1,8 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.exception.StudentNotFoundException;
@@ -45,11 +47,14 @@ public class AvatarService {
                 OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
                 BufferedInputStream bis = new BufferedInputStream(is, 1024);
                 BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
-                ) {
+        ) {
             bis.transferTo(bos);
         }
 
-        Avatar avatar = new Avatar();
+        Avatar avatar = findAvatar(id);
+        if (avatar == null) {
+            avatar = new Avatar();
+        }
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
         avatar.setFileSize(avatarFile.getSize());
@@ -62,4 +67,9 @@ public class AvatarService {
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
+
+    public Avatar findAvatar(long id) {
+        return avatarRepository.findByStudentId(id).orElse(null);
+    }
+
 }
