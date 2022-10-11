@@ -1,6 +1,5 @@
 package ru.hogwarts.school.service;
 
-import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -151,10 +150,10 @@ public class FacultyServiceTest {
                 createStudent(5, "5", 20)
         );
 
-        when(facultyRepository.findStudents(any()))
+        when(facultyRepository.findStudent(any()))
                 .thenReturn(students);
 
-        assertThat(facultyService.findStudents(1))
+        assertThat(facultyService.findStudent(1))
                 .hasSize(3)
                 .containsExactlyInAnyOrderElementsOf(students);
     }

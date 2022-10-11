@@ -21,5 +21,5 @@ public interface FacultyRepository extends JpaRepository<Faculty, Long> {
     Collection<Faculty> findNameOrColor(@Param("filter") String filter);
 
     @Query("SELECT s FROM Student s, Faculty f WHERE s.faculty.id = f.id AND f.id = :id")
-    Collection<Student> findStudents(Long id);
+    Collection<Student> findStudent(Long id);
 }
