@@ -37,7 +37,7 @@ public class AvatarService {
 
     public void uploadAvatar(long id, MultipartFile avatarFile) throws IOException {
 
-        Student student = studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException());
+        Student student = studentRepository.findById(id).orElseThrow(StudentNotFoundException::new);
 
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
 
