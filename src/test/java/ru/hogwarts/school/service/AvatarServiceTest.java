@@ -6,9 +6,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.AvatarRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Optional;
 
@@ -21,7 +23,7 @@ public class AvatarServiceTest {
 
     @Mock
     AvatarRepository avatarRepository;
-
+    StudentRepository studentRepository;
     @InjectMocks
     AvatarService avatarService;
 
@@ -40,6 +42,16 @@ public class AvatarServiceTest {
 
     @Test
     public void uploadAvatar() {
+        Student student = createStudent(1, "1", 25);
+        when(studentRepository.findById(any()))
+                .thenReturn(Optional.of(student));
+    }
+
+    @Test
+    public void uploadAvatarNotFoundStudent() {
+        Student student = createStudent(1, "1", 25);
+        when(studentRepository.findById(any()))
+                .thenReturn(Optional.empty());
 
     }
 
