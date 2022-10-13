@@ -22,6 +22,14 @@ public class Student {
         return id;
     }
 
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
+    }
+
     public void setId(long id) {
         this.id = id;
     }
