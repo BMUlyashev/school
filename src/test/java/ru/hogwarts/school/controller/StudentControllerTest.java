@@ -1,6 +1,5 @@
 package ru.hogwarts.school.controller;
 
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,15 +12,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.setAllowComparingPrivateFields;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentControllerTest {
@@ -37,6 +34,9 @@ public class StudentControllerTest {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private FacultyRepository facultyRepository;
 
     private final String url = "http://localhost:";
 
@@ -244,6 +244,7 @@ public class StudentControllerTest {
     public void getStudentFaculty() {
         Faculty faculty = createFaculty(1, "faculty", "red");
         Student student = createStudent(1, "test", 1);
+        faculty = facultyRepository.save(faculty);
         student.setFaculty(faculty);
         student = createStudentInRepository(student);
 
@@ -253,6 +254,18 @@ public class StudentControllerTest {
         assertThat(response.getBody().getColor()).isEqualTo(faculty.getColor());
         assertThat(response.getBody().getName()).isEqualTo(faculty.getName());
 
+        studentRepository.deleteById(student.getId());
+        facultyRepository.deleteById(faculty.getId());
+    }
+
+    @Test
+    public void getStudentFacultyNotFound() {
+        Student student = createStudent(1, "test", 1);
+        student = createStudentInRepository(student);
+
+        ResponseEntity<Faculty> response = restTemplate.getForEntity(url + port + "/student/{id}/faculty", Faculty.class, student.getId());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         studentRepository.deleteById(student.getId());
     }
 
