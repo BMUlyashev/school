@@ -210,7 +210,7 @@ public class FacultyControllerTest {
         when(facultyRepository.findStudent(any())).thenReturn(students);
 
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/{id}/students", 2)
+                .get("/faculty/{id}/students", 2)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
