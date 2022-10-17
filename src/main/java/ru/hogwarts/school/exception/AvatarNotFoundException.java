@@ -1,9 +1,9 @@
 package ru.hogwarts.school.exception;
 
-public class StudentNotFoundException extends RuntimeException {
+public class AvatarNotFoundException extends RuntimeException {
     private final long id;
 
-    public StudentNotFoundException(long id) {
+    public AvatarNotFoundException(long id) {
         this.id = id;
     }
 

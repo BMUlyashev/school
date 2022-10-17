@@ -4,9 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.hogwarts.school.component.RecordMapper;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.record.StudentRecord;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collections;
@@ -24,16 +29,27 @@ public class StudentServiceTest {
     @Mock
     StudentRepository studentRepository;
 
+    @Mock
+    FacultyRepository facultyRepository;
+
     @InjectMocks
     StudentService studentService;
 
+    @Mock
+    RecordMapper recordMapper;
+
+
     @Test
     public void createStudent() {
-        Student student = createStudent(1, "1", 18);
-        when(studentRepository.save(any(Student.class)))
-                .thenReturn(student);
+        Student student = createStudent(1, "1", 1);
+        Faculty faculty = createFaculty(2, "2", "red");
+        StudentRecord studentRecord = createStudentRecord(1, "1", 1);
 
-        assertThat(studentService.createStudent(student)).isEqualTo(student);
+        when(studentRepository.save(any())).thenReturn(student);
+//        when(facultyRepository.findById(any())).thenReturn(Optional.of(faculty));
+        when(recordMapper.toEntity(any(StudentRecord.class))).thenReturn(student);
+        when(recordMapper.toRecord(any(Student.class))).thenReturn(studentRecord);
+        assertThat(studentService.createStudent(studentRecord)).isEqualTo(studentRecord);
     }
 
     @Test
@@ -211,5 +227,11 @@ public class StudentServiceTest {
         return faculty;
     }
 
-
+    private StudentRecord createStudentRecord(long id, String name, int age) {
+        StudentRecord studentRecord = new StudentRecord();
+        studentRecord.setId(id);
+        studentRecord.setName(name);
+        studentRecord.setAge(age);
+        return studentRecord;
+    }
 }

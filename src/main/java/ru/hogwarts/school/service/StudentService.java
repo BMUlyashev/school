@@ -1,8 +1,11 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.component.RecordMapper;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.record.StudentRecord;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
@@ -13,12 +16,22 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
 
-    public StudentService(StudentRepository studentRepository) {
+    private final FacultyRepository facultyRepository;
+
+    private final RecordMapper recordMapper;
+    public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository, RecordMapper recordMapper) {
         this.studentRepository = studentRepository;
+        this.facultyRepository = facultyRepository;
+        this.recordMapper = recordMapper;
     }
 
-    public Student createStudent(Student student) {
-        return studentRepository.save(student);
+    public StudentRecord createStudent(StudentRecord studentRecord) {
+        Student student = recordMapper.toEntity(studentRecord);
+        student.setFaculty(Optional.ofNullable(student.getFaculty())
+                .map(Faculty::getId)
+                .flatMap(facultyRepository::findById)
+                .orElse(null));
+        return recordMapper.toRecord(studentRepository.save(student));
     }
 
     public Student findStudent(long id) {
